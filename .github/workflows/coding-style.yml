@@ -1,15 +1,18 @@
-name: Fix PHP code style issues
+name: Coding Style
 
 on:
   push:
     paths:
-      - '**.php'
+      - "**.php"
+      - "pint.json"
+      - ".github/workflows/coding-style.yml"
 
 permissions:
   contents: write
 
 jobs:
-  php-code-styling:
+  coding-style:
+    name: Coding Style
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
