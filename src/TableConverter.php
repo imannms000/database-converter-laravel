@@ -76,6 +76,7 @@ class TableConverter
 
         $progressBar->finish();
 
+        $this->manager->command()->newLine();
         $this->manager->command()->info(sprintf(
             'All %s records from table %s has been converted successfully.',
             number_format($recordCount),
