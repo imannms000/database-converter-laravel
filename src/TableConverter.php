@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RichanFongdasen\DatabaseConverter;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class TableConverter
@@ -27,6 +28,15 @@ class TableConverter
             ->table($this->tableName)
             ->count();
 
+        $generatedColumns = collect(
+            $this->manager->target()
+                ->getSchemaBuilder()
+                ->getColumns($this->tableName)
+        )->keyBy('name')
+            ->whereNotNull('generation')
+            ->keys()
+            ->toArray();
+
         $this->manager->command()->info(sprintf(
             'Converting %s records from table `%s`',
             number_format($recordCount),
@@ -46,14 +56,22 @@ class TableConverter
         $this->manager->source()
             ->table($this->tableName)
             ->orderBy($firstColumn, 'asc')
-            ->chunk(10, function (Collection $rows) use ($progressBar) {
-                $rows->each(function ($row) {
-                    $this->manager->target()
-                        ->table($this->tableName)
-                        ->insert((array) $row);
-                });
+            ->chunk((int) config('database-converter-laravel.chunk_size', 700), function (Collection $rows) use ($progressBar, $generatedColumns) {
+                $data = $rows->map(function ($row) use ($generatedColumns) {
+                    $record = (array) $row;
+
+                    Arr::forget($record, $generatedColumns);
+
+                    return $record;
+                })->toArray();
+
+                $this->manager->target()
+                    ->table($this->tableName)
+                    ->insert($data);
 
                 $progressBar->advance($rows->count());
+
+                unset($rows, $data);
             });
 
         $progressBar->finish();

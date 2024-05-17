@@ -19,6 +19,7 @@ class DatabaseConverterServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('database-converter-laravel')
+            ->hasConfigFile()
             ->hasCommand(DatabaseConverterCommand::class);
     }
 }

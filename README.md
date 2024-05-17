@@ -17,6 +17,22 @@ You can install the package via composer:
 composer require richan-fongdasen/database-converter-laravel
 ```
 
+### Publishing Configuration
+
+You can publish the configuration file using the following command:
+
+```bash
+php artisan vendor:publish --provider="RichanFongdasen\DatabaseConverter\DatabaseConverterServiceProvider"
+```
+
+The above command publishes the configuration file to `config/database-converter-laravel.php`, and the content of the configuration file will look like this:
+
+```php
+return [
+    'chunk_size' => 700,
+];
+```
+
 ## Usage
 
 In this example, we will convert the database schema from MySQL to SQLite.
