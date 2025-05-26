@@ -30,8 +30,22 @@ The above command publishes the configuration file to `config/database-converter
 ```php
 return [
     'chunk_size' => 700,
+    
+    /*
+     * Tables to ignore during conversion.
+     * By default, the 'migrations' table is always ignored.
+     */
+    'ignore_tables' => [
+        // 'table_name_to_ignore',
+        // 'another_table_to_ignore',
+    ],
 ];
 ```
+
+### Configuration Options
+
+- **chunk_size**: The number of records to process in each batch during data conversion. Default is 700.
+- **ignore_tables**: An array of table names to ignore during the conversion process. The `migrations` table is always ignored regardless of this configuration.
 
 ## Usage
 
