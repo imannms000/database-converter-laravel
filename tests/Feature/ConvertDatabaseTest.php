@@ -47,3 +47,44 @@ test('it can convert the database as expected.', function () {
         });
     });
 })->group('FeatureTest');
+
+test('it can ignore specified tables during conversion.', function () {
+    config()->set('database-converter-laravel.ignore_tables', ['projects']);
+
+    Artisan::call('db:convert', [
+        'sourceConnection' => 'source',
+        'targetConnection' => 'target',
+    ]);
+
+    expect(DB::connection('target')->table('projects')->count())->toBe(0);
+
+    expect(DB::connection('target')->table('environments')->count())->toBe(DB::connection('source')->table('environments')->count());
+    expect(DB::connection('target')->table('deployments')->count())->toBe(DB::connection('source')->table('deployments')->count());
+})->group('FeatureTest');
+
+test('it always ignores migrations table regardless of configuration.', function () {
+    config()->set('database-converter-laravel.ignore_tables', []);
+
+    if (!DB::connection('source')->getSchemaBuilder()->hasTable('migrations')) {
+        DB::connection('source')->statement('CREATE TABLE migrations (id INTEGER PRIMARY KEY, migration VARCHAR(255), batch INTEGER)');
+    }
+
+    DB::connection('source')->table('migrations')->insert([
+        'migration' => '2023_01_01_000000_create_test_table',
+        'batch' => 1
+    ]);
+
+    if (!DB::connection('target')->getSchemaBuilder()->hasTable('migrations')) {
+        DB::connection('target')->statement('CREATE TABLE migrations (id INTEGER PRIMARY KEY, migration VARCHAR(255), batch INTEGER)');
+    }
+
+    $initialCount = DB::connection('target')->table('migrations')->count();
+
+    Artisan::call('db:convert', [
+        'sourceConnection' => 'source',
+        'targetConnection' => 'target',
+    ]);
+
+    expect(DB::connection('target')->table('migrations')->count())->toBe($initialCount);
+    expect(DB::connection('source')->table('migrations')->count())->toBeGreaterThan(0);
+})->group('FeatureTest');
