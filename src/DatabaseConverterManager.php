@@ -14,8 +14,7 @@ class DatabaseConverterManager
         protected DatabaseConverterCommand $command,
         protected string $sourceConnection,
         protected string $targetConnection
-    ) {
-    }
+    ) {}
 
     public static function make(
         DatabaseConverterCommand $command,

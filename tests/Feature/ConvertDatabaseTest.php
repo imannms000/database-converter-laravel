@@ -65,16 +65,16 @@ test('it can ignore specified tables during conversion.', function () {
 test('it always ignores migrations table regardless of configuration.', function () {
     config()->set('database-converter-laravel.ignore_tables', []);
 
-    if (!DB::connection('source')->getSchemaBuilder()->hasTable('migrations')) {
+    if (! DB::connection('source')->getSchemaBuilder()->hasTable('migrations')) {
         DB::connection('source')->statement('CREATE TABLE migrations (id INTEGER PRIMARY KEY, migration VARCHAR(255), batch INTEGER)');
     }
 
     DB::connection('source')->table('migrations')->insert([
         'migration' => '2023_01_01_000000_create_test_table',
-        'batch' => 1
+        'batch'     => 1,
     ]);
 
-    if (!DB::connection('target')->getSchemaBuilder()->hasTable('migrations')) {
+    if (! DB::connection('target')->getSchemaBuilder()->hasTable('migrations')) {
         DB::connection('target')->statement('CREATE TABLE migrations (id INTEGER PRIMARY KEY, migration VARCHAR(255), batch INTEGER)');
     }
 

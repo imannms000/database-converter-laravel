@@ -12,8 +12,7 @@ class TableConverter
     public function __construct(
         protected DatabaseConverterManager $manager,
         protected string $tableName
-    ) {
-    }
+    ) {}
 
     public static function make(
         DatabaseConverterManager $manager,
