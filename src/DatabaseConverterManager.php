@@ -66,7 +66,7 @@ class DatabaseConverterManager
                 return;
             }
 
-            $ignoreTables = config()->array('database-converter-laravel.ignore_tables', []);
+            $ignoreTables = (array) config('database-converter-laravel.ignore_tables', []);
             if (in_array($table, $ignoreTables, true)) {
                 return;
             }
